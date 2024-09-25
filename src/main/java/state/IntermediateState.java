@@ -4,14 +4,8 @@ public class IntermediateState extends State {
 
 
     public IntermediateState(Character character) {
-        super(character,60,true,false);
-    }
+        super(character, INTERMEDIATE_THRESHOLD);
 
-
-    @Override
-    public void levelUp() {
-        super.getCharacter().setState(new ExpertState(super.getCharacter()));
-        System.out.println("Congratulations! You have reached the Expert level! Fight action is now available.");
     }
 
 
@@ -20,6 +14,32 @@ public class IntermediateState extends State {
         return "Intermediate";
     }
 
+    @Override
+    public void action() {
+        switch (this.getCharacter().readUserChoice()) {
+            case TRAIN:
+                this.getCharacter().train();
+                break;
+            case FIGHT:
+                System.out.println("Only experts can fight!.");
+                break;
+            case MEDITATE:
+                this.getCharacter().meditate();
+                break;
+            default:
+                System.out.println("Invalid choice. Please try again.");
+        }
+        levelUp();
+    }
 
-
+    @Override
+    public void levelUp() {
+        if (getCharacter().getExperience() >= getLevelThreshold()) {
+            System.out.println("Leveling up to Expert, You can now Fight!");
+            getCharacter().setState(new ExpertState(getCharacter()));
+        }
+    }
 }
+
+
+
