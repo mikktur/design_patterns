@@ -6,10 +6,7 @@ public class ExpertState extends State {
     }
 
 
-    @Override
-    public void displayActions() {
-        System.out.println("Available actions: (1)Train (2)Meditate (3)Fight");
-    }
+
     @Override
     public void levelUp() {
         super.getCharacter().setState(new MasterState(super.getCharacter()));
