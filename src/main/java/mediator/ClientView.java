@@ -22,6 +22,10 @@ public class ClientView {
         messageBox = new TextField();
         userBox = new ComboBox();
         sendButton = new Button("Send");
+        messageBox.setPromptText("Enter message");
+        chatBox.setEditable(false);
+
+        messageBox.setMinHeight(50);
         borderPane.setCenter(chatBox);
         borderPane.setBottom(messageBox);
         borderPane.setLeft(userBox);
@@ -59,6 +63,7 @@ public class ClientView {
         chatBox.appendText(message.getSender()+"@"+message.getReceiver()+": "+message.getMessage()+"\n");
 
     }
+
 
 
 
