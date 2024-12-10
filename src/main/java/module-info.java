@@ -10,4 +10,6 @@ module design_patterns {
     opens flyweight.tile to javafx.fxml;
     exports flyweight.map;
     opens flyweight.map to javafx.fxml;
+    opens memento to javafx.fxml;
+    exports memento;
 }
