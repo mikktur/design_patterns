@@ -8,6 +8,7 @@ public class Main {
         Facade facade = new Facade();
         try{
             System.out.println(facade.getAttributeValueFromJson("https://api.chucknorris.io/jokes/random", "value"));
+            System.out.println(facade.getAttributeValueFromJson("https://api.fxratesapi.com/latest", "EUR"));
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
         } catch (IOException e) {

@@ -1,5 +1,6 @@
 package facade;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -35,7 +36,7 @@ public class Facade {
         }
     }
 
-    public String getAttributeValueFromJson(String urlString, String attributeName) throws IllegalArgumentException, IOException{
+    public String getAttributeValueFromJson(String urlString, String attributeName) throws IllegalArgumentException, IOException {
         try {
             String jsonResult = getJsonFromApi(urlString);
             return extractJokeFromJson(jsonResult, attributeName);
@@ -49,22 +50,57 @@ public class Facade {
             throw new IllegalArgumentException(e.getMessage(), e);
         }
     }
+
     public String getRandomJoke() throws Exception {
         String jsonResult = getJsonFromApi("https://api.chucknorris.io/jokes/random");
-        return extractJokeFromJson(jsonResult,"value");
+        return extractJokeFromJson(jsonResult, "value");
     }
-    private String extractJokeFromJson(String json,String attribute) throws IllegalArgumentException, ParseException {
+    //ois voinu myös ottaa argumentiksi attributepathin ja splitata sen ja käyttää sitä
+    private String extractJokeFromJson(String json, String attribute) throws IllegalArgumentException, ParseException {
         parser = new JSONParser();
         try {
-            JSONObject jsonObject = (JSONObject) parser.parse(json);
-            if (jsonObject.get(attribute) == null) {
-                throw new IllegalArgumentException("attribute not found");
+            Object parsedJson = parser.parse(json);
+            //halusin testata rekursiivista hakua
+            String result = searchRecursively(parsedJson, attribute);
+
+            if (result != null) {
+                return result;
             }
-            return (String) jsonObject.get(attribute);
+
+            return "attribute not found";
+
         } catch (ParseException e) {
-            throw new IllegalArgumentException("failed to parse json: " + e.getMessage(), e);
+            throw new ParseException(ParseException.ERROR_UNEXPECTED_TOKEN, e);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("failed to extract joke: " + e.getMessage(), e);
         }
 
 
+    }
+    //ei mikään paras ratkasu mutta toimii :'D
+    public String searchRecursively(Object json, String attribute) {
+
+        if (json instanceof JSONObject jsonObject) {
+            for (Object key : jsonObject.keySet()) {
+                if (key.equals(attribute)) {
+                    return jsonObject.get(key).toString();
+                }
+
+                Object value = jsonObject.get(key);
+                String result = searchRecursively(value, attribute);
+                if (result != null) {
+                    return result;
+                }
+            }
+        } else if (json instanceof JSONArray jsonArray) {
+            for (Object element : jsonArray) {
+                String result = searchRecursively(element, attribute);
+                if (result != null) {
+                    return result;
+                }
+            }
+        }
+
+        return null;
     }
 }
